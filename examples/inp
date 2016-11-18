@@ -1,0 +1,41 @@
+message: DATAPATH=/home/anton/mcnp_data/MCNP_DATA
+
+MCNP input file to generate meshtal examples
+1 1 -1.0  -1 imp:n=1
+2 0        1 imp:n=0
+
+1 so 100.0
+
+sdef  
+m1 1001 2   8016 1
+mt1 lwtr.10t
+ctme 1
+fmesh4:n geom xyz
+        origin -100 -100 -100
+        imesh 100 iints 3
+        jmesh 100 jints 4
+        kmesh 40 100 kints 2 3
+        emesh 1e-10 4ilog  1e0
+fmesh14:n geom cyl
+        origin 0 0 -100
+        axs 0 0 1
+        vec 1 0 0 
+        imesh 50 110 iints 3 4
+        jmesh 60 220 jints 4 5
+        kmesh 0.5 1 kints 4 1
+        emesh 1e-10 4ilog  1
+fmesh24:n geom xyz
+        origin -100 -100 -100
+        imesh 100 iints 3
+        jmesh 100 jints 4
+        kmesh 40 100 kints 2 3
+fmesh34:n geom cyl
+        origin 0 0 -100
+        axs 0 0 1
+        vec 1 0 0 
+        imesh 50 110 iints 3 4
+        jmesh 60 220 jints 4 5
+        kmesh 0.5 1 kints 4 1
+print
+cut:n j j 1e-2
+
