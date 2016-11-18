@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 
 """
 Convert meshtallies from all meshtal files given in the command line.
@@ -15,34 +15,20 @@ as the basename for the resulting vtk file. The other arguments must be the
 names of meshtal files.
 
 UPD: Separate files are generated for each tally from meshtal file. Thus, prefix is not needed.
-Combining tallies into single data set can be done in paraview via programmable filter or via 
+Combining tallies into single data set can be done in paraview via programmable filter or via
 "group datasets".
 
 """
 from sys import argv
 import vtk
+_vtkVersion = vtk.vtkVersion.GetVTKSourceVersion().split()[-1]
 from .tallies import read_meshtal
 from numpy import array, reshape
 
 def main():
 
-    if len(argv) == 1:
-        # no command line arguments given
-        print __doc__.format(argv[0])
-        prefix = ''
-        mfiles = []
-    elif len(argv) == 2:
-        prefix = argv[1]
-        mfiles = argv[1:]
-    else:
-        prefix = argv[1]
-        mfiles = argv[2:]
+    mfiles = argv[1:]
 
-    # Separate files are written for each tally, no need in prefix.
-    prefix = ''
-    mfiles = argv[1:]    
-
-    print 'prefix', prefix
     print 'mfiles', mfiles
 
 
@@ -74,26 +60,32 @@ def main():
 
     # mb = vtk.vtkMultiBlockDataSet()
     # af = vtk.vtkAppendFilter()
-    # 
+    #
     # nblocks = 0
     for meshtal in mfiles:
         print 'Reading ', meshtal,
 
         title, nps, td = read_meshtal(meshtal, use_uncertainties=False)
         print 'complete'
-        
+
         for tn, t  in td.items():
-            assert t.geom.lower()  in ('xyz', 'rect')
+            if t.geom.lower() not in ('xyz', 'rect'):
+                continue
 
             vals = array(t.values)
             errs = array(t.errors)
 
             # reshape arrays, to account for energy bins:
-            print t.emesh
+            print 'Tally', tn
+            print 'imesh', t.imesh
+            print 'jmesh', t.jmesh
+            print 'kmesh', t.kmesh
+            print 'emesh', t.emesh
             sh = (len(t.emesh), len(t.imesh), len(t.jmesh), len(t.kmesh))
-            print sh
-            # rvals = reshape(vals, sh)
-            # rerrs = reshape(errs, sh)
+            print 'sh:', sh
+            print len(vals)
+            rvals = reshape(vals, sh)
+            rerrs = reshape(errs, sh)
 
             # prepare grid boundaries
             x = vtk.vtkDoubleArray()
@@ -102,8 +94,8 @@ def main():
             x.SetName('x')
             y.SetName('y')
             z.SetName('z')
-            for a, i0, l in ((x, t.origin.x, t.imesh), 
-                             (y, t.origin.y, t.jmesh), 
+            for a, i0, l in ((x, t.origin.x, t.imesh),
+                             (y, t.origin.y, t.jmesh),
                              (z, t.origin.z, t.kmesh)):
                 for v in [i0] + l:
                     a.InsertNextValue(v)
@@ -119,24 +111,24 @@ def main():
             grid.SetZCoordinates(z)
 
 
-            # prepare array for tally values and errors 
+            # prepare array for tally values and errors
             # Value and error will be rwitten as separate scalar arrays. In this form the threshold
             # filter can be applied in paraview. This filter cannot be applied to an array of vectors.
-            val = vtk.vtkDoubleArray() 
+            val = vtk.vtkDoubleArray()
 
             # Data arrays containing values and errors should heve the same name
             # for all datasets. In this case it is more simple to replace one data
             # set with another one in the paraview state. WHen datasets have
             # different names, one needs to change data arrays to be displayed
-            # manually for all views.  
+            # manually for all views.
 
             # val.SetName('{} t{} val'.format(meshtal, tn))
             # val.SetName('t{} val'.format(tn))
             val.SetName('val')
-            val.SetNumberOfComponents(1) 
+            val.SetNumberOfComponents(1)
             val.SetNumberOfTuples(grid.GetNumberOfCells())
 
-            err = vtk.vtkDoubleArray() 
+            err = vtk.vtkDoubleArray()
             # err.SetName('{} t{} err'.format(meshtal, tn))
             # err.SetName('t{} err'.format(tn))
             err.SetName('err')
@@ -148,15 +140,18 @@ def main():
             ylen = y.GetNumberOfTuples()-1
             zlen = z.GetNumberOfTuples()-1
             ival = 0 # index for meshtal
-            vmax = max(t.values) 
+            vmax = max(t.values)
             vmin = vmax
             for i in range(xlen):
                 for j in range(ylen):
                     for k in range(zlen):
                         idx = grid.ComputeCellId((i, j, k))
-                        # print i, j, k, idx
-                        hn = t.values[ival]
-                        en = t.errors[ival]
+                        # hn = t.values[ival]
+                        # en = t.errors[ival]
+                        hn = rvals[-1, i, j, k]
+                        en = rerrs[-1, i, j, k]
+
+                        # print i, j, k, hn, en
 
                         # Replace zero values and zero errors with NaN:
                         if en > 0:
@@ -182,8 +177,8 @@ def main():
             df.SetValue(3, 'min: {}, max: {}'.format(vmin, vmax))
 
             # Attach values to the grid
-            grid.GetCellData().AddArray(val)    
-            grid.GetCellData().AddArray(err)    
+            grid.GetCellData().AddArray(val)
+            grid.GetCellData().AddArray(err)
             grid.GetFieldData().AddArray(df)
 
             # # Attach current grid to multigrid
@@ -193,7 +188,11 @@ def main():
 
             # write to file:
             writer = vtk.vtkXMLRectilinearGridWriter()
-            writer.SetInputData(grid)
+            if _vtkVersion[0] == '6':
+                writer.SetInputData(grid)
+            else:
+                # _vtkVersion[0] == '5':
+                writer.SetInput(grid)
             writer.SetFileName('{}_t{}.vtr'.format(meshtal, tn))
             ws = writer.Write()
             if ws == 1:
@@ -201,8 +200,6 @@ def main():
             else:
                 print 'Failed to write mesh tally {} written to file {}'.format(tn, writer.GetFileName())
 
-    print df
-    print type(df)
 
 if __name__ == '__main__':
     main()

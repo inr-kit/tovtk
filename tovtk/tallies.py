@@ -10,23 +10,31 @@ try:
 except ImportError:
     _uncertainties_package = False
 
-from ..core.trageom import Vector3
-from . import formatter
-from .auxiliary import Counter, Collection
-from .mctal import str2float
+class Vector3(object):
+    """
+    Replacement of the pirs.Vector3.
+    """
+    def __init__(self, xyz):
+        self.x = xyz[0]
+        self.y = xyz[1]
+        self.z = xyz[2]
+
+
+# from .mctal import str2float
+str2float = float
 
 class MeshTally(object):
     """Representation of mesh tally.
 
     Object-oriented representation of mesh tally data needed for MCNP input
     file, as implemented in MCNP 5.  On the same time, an instance of this
-    class is a container for the mesh tally results. 
+    class is a container for the mesh tally results.
 
     WARNING: Currently there is no protection from inconsistency between the
     array of results and tally specification.
 
-    Differences from the MCNP manual: 
-    
+    Differences from the MCNP manual:
+
         * there are default values for the coarse meshes coordinates.
 
         * there is other than flux tally type: one can specify also tally types 6
@@ -35,7 +43,7 @@ class MeshTally(object):
 
     >>> mt = MeshTally()
     >>> print mt
-    fmesh{0:<}:n $ 
+    fmesh{0:<}:n $
          geom=xyz
          origin=0.0 0.0 0.0
          imesh= 1.0
@@ -112,8 +120,8 @@ class MeshTally(object):
         This property is an instance of the mcnp.core.trageom.Vector3() class.
         The setter method accepts also a tuple of coordinates that are passed
         to the Vector3() class constructor.
-        
-        """ 
+
+        """
         return self.__axs
 
     @axs.setter
@@ -130,7 +138,7 @@ class MeshTally(object):
         When set, the geometry type is changed to cylindrical, automatically.
 
         This property is an instance of the mcnp.core.trageom.Vector3() class.
-        See also description of axs property. 
+        See also description of axs property.
 
         """
         return self.__vec
@@ -192,7 +200,7 @@ class MeshTally(object):
         The output format. Can be 'col', 'cf', 'ij', 'ik' or 'jk'.
 
         Note that currently only 'col' and 'cf' formats can be read by the
-        read_meshtal function. 
+        read_meshtal function.
         """
         self.__out
 
@@ -276,7 +284,7 @@ class MeshTally(object):
             self.__typ = 6
             self.__fmt = 'fm{0:<} -1 0 1 -4' # average heating numbers (MeV/collision)
         elif v == 7:
-            # fission energy. 
+            # fission energy.
             self.__par = 'n'
             self.__typ = 7
             self.__fmt = 'fm{0:<} -1 0 -6 -8' # Sf * Qfiss
@@ -317,46 +325,6 @@ class MeshTally(object):
         """
         return NotImplemented
 
-    def card(self, formatted=True):
-        """
-        Returns a multi-line string with the mesh tally card for MCNP input.
-
-        If optional argument formatted set to True (default), the
-        returned string can contain additional new-line characters,
-        so that lines fit to the 80-charachters limit imposed by
-        the MCNP input file syntax.
-        """
-        space1 = ' '*5
-        res = ['fmesh{0}:{1} $ {2}'.format('{0:<}', self.__par, self.__cmt)]
-        res.append(space1 + 'geom={0}'.format(self.__geo))
-        res.append(space1 + 'origin={0} {1} {2}'.format(*self.__ori.car))
-        if self.__geo == 'cyl':
-            res.append(space1 + 'axs={0} {1} {2}'.format(*self.__axs.car))
-            res.append(space1 + 'vec={0} {1} {2}'.format(*self.__vec.car))
-        for n in ['imesh', 'jmesh', 'kmesh']:
-            res.append(space1 + n + '=')
-            for v in getattr(self, n):
-                res[-1] += ' {0}'.format(round(v, self.PRECISION))
-        for n in ['iints', 'jints', 'kints']:
-            lst = getattr(self, n)
-            if lst != [1]:
-                res.append(space1 + n + '=')
-                for v in lst:
-                    res[-1] += ' {0}'.format(v)
-        if self.__eme != [0]:
-            res.append(space1 + 'emesh=')
-            for v in self.__eme:
-                res[-1] += ' {0}'.format(v)
-        if self.__ein != [1]:
-            res.append(space1 + 'eints=')
-            for v in self.__ein:
-                res[-1] += ' {0}'.format(v)
-        if self.__fmt is not None:
-            res.append(self.__fmt)
-        res = '\n'.join(res)
-        if formatted:
-            res = formatter.format_card(res) #### multiline(res)
-        return res
 
     def __eq__(self, othr):
         return ( self.__geo == othr.__geo and
@@ -385,13 +353,13 @@ class MeshTally(object):
 
 def read_meshtal(fname, use_uncertainties=True):
     """Reads meshtal file.
-    
+
     Meshtal file to read is given by its name in the argument fname. Optional
     argument use_uncertainties specifies whether to use the Uncertainties
     package to store statistical error.
 
     Returns a tuple (t, n, r), where:
-    
+
         t: problem title
         n: number of histories,
         r: dictionary with results.
@@ -423,7 +391,8 @@ def read_meshtal(fname, use_uncertainties=True):
                 tid = int(l.split()[-1])
                 mt = MeshTally()
                 res[tid] = mt
-            if '  Cylinder origin at' == l[0:20]:
+            if ('  Cylinder origin at' == l[0:20] or
+                '               origin at' == l[0:24]):
                 mt.geom = 'cyl'
                 ll = l.split()
                 mt.origin = ( ll[3], ll[4], ll[5][:-1] ) # the last entry followed by comma
@@ -462,6 +431,7 @@ def read_meshtal(fname, use_uncertainties=True):
                     # this is default.
                     pass
                 else:
+                    mt.emesh.pop(0)
                     for ll in lll[3:]:
                         mt.emesh.append(str2float(ll))
             if 'Result     Rel Error' in l:
@@ -494,92 +464,5 @@ def read_meshtal(fname, use_uncertainties=True):
                 mt.values.append(value)
                 mt.errors.append(r)
     return tit[-1], Noh, res
-
-
-
-class TallyCollection(Collection):
-    """Collection of tallies.
-
-    Adding a tally instance to the collection provides for this tally a
-    unique number. The last digit of the number is defined by the tally type,
-    the other -- are 10x multiples of the added tally.
-
-    """
-    def __init__(self):
-        super(TallyCollection, self).__init__()
-        self.__use_uncert = False
-
-    def index(self, tally):
-        """Returns index of tally in the collection.
-
-        If tally is allready in the collection, its index is returned. If tally
-        is not in the collection, it is added to the collecion under a unique index, 
-        that can be used as tally number in the MCNP input file.
-
-        """
-
-        if isinstance(tally, int):
-            if tally in self.keys():
-                return tally
-            else:
-                raise IndexError('Collection has no element with index ', tally)
-        elif isinstance(tally, MeshTally):
-            i = self._find(tally)
-            if i is None:
-                i = self._add(tally, lambda x: 10*x + 4)
-            return i
-        else:
-            raise TypeError('Cannot add tally of type ', tally.__class__.__name__)
-
-    def add(self, tally):
-        self.index(tally)
-        print "WARNING: use of TallyCollection.add() method is deprecated. Use index() method instead."
-        return
-
-    def cards(self, formatted=True):
-        """
-        Returns a list of multi-line strings with mesh tally cards for the tallies
-        in the collection.
-        """
-        c = ['c tallies']
-        for (ID, t) in self.items():
-            c.append(t.card(formatted).format(ID))
-        return c
-
-    def __str__(self):
-        return '\n'.join(self.cards(True))
-
-    @property
-    def use_uncertainties(self):
-        """
-        Boolean flag. If True, the uncertainties package is used to 
-        handle statistical errors.
-
-        This can result in memory runout.
-        """
-        return self.__use_uncert
-
-    @use_uncertainties.setter
-    def use_uncertainties(self, value):
-        self.__use_uncert = value
-
-    def read(self, meshtal='meshtal', mctal=None):
-        """
-        Reads meshtal and mctal and loads data to correspondent tally instances.
-        """
-        if meshtal is not None:
-            title, noh, d = read_meshtal(meshtal, self.__use_uncert)
-            # if meshtal was read, remove previous entries.
-
-            for nt in list( set(d.keys()) & set(self.keys())):
-                # clear old meshtally data
-                while len(self[nt].values) > 0:
-                    self[nt].values.pop()
-                for r in d[nt].values:
-                    # self[nt].values.append((str2float(r[0]), str2float(r[1])))
-                    self[nt].values.append(r)
-        if mctal is not None:
-            raise NotImplemented('reding of mctal file not implemented yet')
-        return 
 
 
