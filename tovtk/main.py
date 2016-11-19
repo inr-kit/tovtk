@@ -1,24 +1,34 @@
 #!/usr/bin/env python
 
+help_note = """
+Meshtal to VTK converter.
+
+Converts rectangular meshtallies from meshtal files given in the command line.
+Each meshtally is written to a separate vtr file representing a rectilinear
+grid. Invocation:
+
+    >tovtk  meshtal1 [meshtal2 ...]
+
+For each meshtally `N` in file `meshtal`, script writes a vtk file named
+`meshtal_tN.vtr`.  """
+
+normalization_note = """
+Normalization constants not applied, generated vtk files contain data
+exactly as in meshtal files. For ITER applications, normalization constants
+for flux [1/cm2s] and heat [W/cm3]:
+
+    Ch = {:18e}
+    Cf = {:18e}
+
+To normalize tallies in Paraview, use Programmable filter. For example, to
+compute total heating from the neutron and photon components:
+
+        v1 = inputs[0].CellData['val']
+        v2 = inputs[1].CellData['val']
+
+        output.CellData.append((v1 + v2)*Ch, 'Total heating')
 """
-Convert meshtallies from all meshtal files given in the command line.
-All tallies are written to a single vtk file, in multi block data set format.
 
-> {} [prefix] meshtal1 [meshtal2 ...]
-
-The resulting filename depends on the number of command line arguments. If only
-one argument is given, it must be a meshtal file. The resulting file is
-obtained by appending the ``.vtm`` suffix.
-
-When more than 1 arguments are given in the command line, the first one is used
-as the basename for the resulting vtk file. The other arguments must be the
-names of meshtal files.
-
-UPD: Separate files are generated for each tally from meshtal file. Thus, prefix is not needed.
-Combining tallies into single data set can be done in paraview via programmable filter or via
-"group datasets".
-
-"""
 from sys import argv
 import vtk
 _vtkVersion = vtk.vtkVersion.GetVTKSourceVersion().split()[-1]
@@ -27,10 +37,11 @@ from numpy import array, reshape
 
 def main():
 
-    mfiles = argv[1:]
-
-    print 'mfiles', mfiles
-
+    if len(argv) == 1:
+        print help_note
+        return
+    else:
+        mfiles = argv[1:]
 
     # normalize to 400 W
     # c1 = 3.1567674e6 # W/MeV
@@ -39,24 +50,7 @@ def main():
         / 14.0791)           # mean neutron energy, MeV
     c2 = c1 / 1.60218e-13   # Conversion factor, J/MeV
 
-    # c2 = (400e6              # Kinetic neutron power, W
-    #     * (40.0/360.0)      # 40 grad sector
-    #     / 14.0791           # mean neutron energy, MeV
-    #     / 1.60218e-13 )     # Conversion factor, J/MeV
-
-    print 'Normalization constants not applied, generated vtk files contain data exactly as in meshtal files.'
-    print 'Normalization constants for flux [1/cm2 s] and heat [W/cm3]:'
-    print 'ch =  {:18e}'.format(c1)
-    print 'cf =  {:18e}'.format(c2)
-
-    print """To normalize tallies in Paraview, use Programmable filter. Script example:
-
-        v1 = inputs[0].CellData['int.fluxmsht t14 val']
-        v2 = inputs[1].CellData['int.fluxmsht t24 val']
-
-        output.CellData.append(v1 + v2, 'Total heating')
-
-    """
+    print normalization_note.format(c1, c2)
 
     # mb = vtk.vtkMultiBlockDataSet()
     # af = vtk.vtkAppendFilter()
@@ -76,14 +70,7 @@ def main():
             errs = array(t.errors)
 
             # reshape arrays, to account for energy bins:
-            print 'Tally', tn
-            print 'imesh', t.imesh
-            print 'jmesh', t.jmesh
-            print 'kmesh', t.kmesh
-            print 'emesh', t.emesh
             sh = (len(t.emesh), len(t.imesh), len(t.jmesh), len(t.kmesh))
-            print 'sh:', sh
-            print len(vals)
             rvals = reshape(vals, sh)
             rerrs = reshape(errs, sh)
 
@@ -151,7 +138,6 @@ def main():
                         hn = rvals[-1, i, j, k]
                         en = rerrs[-1, i, j, k]
 
-                        # print i, j, k, hn, en
 
                         # Replace zero values and zero errors with NaN:
                         if en > 0:
@@ -196,9 +182,9 @@ def main():
             writer.SetFileName('{}_t{}.vtr'.format(meshtal, tn))
             ws = writer.Write()
             if ws == 1:
-                print 'Tally {} file {} non-negative range:  {:12.5e} -- {:12.5e}'.format(tn, writer.GetFileName(), vmin, vmax)
+                print 'Tally {} from {}: non-negative range from {:12.5e} to {:12.5e}'.format(tn, writer.GetFileName(), vmin, vmax)
             else:
-                print 'Failed to write mesh tally {} written to file {}'.format(tn, writer.GetFileName())
+                print 'Failed to write meshtally {} from {}'.format(tn, writer.GetFileName())
 
 
 if __name__ == '__main__':
