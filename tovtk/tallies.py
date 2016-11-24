@@ -427,13 +427,18 @@ def read_meshtal(fname, use_uncertainties=True):
                     mt.kmesh.append(str2float(ll))
             if '    Energy bin bound' == l[0:20]:
                 lll = l.split()
-                if lll[-2:] == ['0.00E+00', '1.00E+36']:
-                    # this is default.
-                    pass
-                else:
+                # Remove the default 0, set by __init__
+                mt.emesh.pop(0)
+
+                # MCNP writes 'total' for tallies having more than 1 energy
+                # bin. Therefore, to use len(emesh) as a size of the values
+                # array along e-axis, emesh contains 1-st 0 for more than one
+                # energy bin, and has only one value in case of a single bin.
+                for ll in lll[3:]:
+                    mt.emesh.append(str2float(ll))
+                if len(mt.emesh) == 2:
                     mt.emesh.pop(0)
-                    for ll in lll[3:]:
-                        mt.emesh.append(str2float(ll))
+
             if 'Result     Rel Error' in l:
                 # this is the head line for the table with results.
                 data_block = True

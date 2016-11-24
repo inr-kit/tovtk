@@ -71,6 +71,10 @@ def main():
 
             # reshape arrays, to account for energy bins:
             sh = (len(t.emesh), len(t.imesh), len(t.jmesh), len(t.kmesh))
+
+            if sh[0] > 1:
+                print 'Meshtally {} contains {} energy bins. Only "total" is written to vtk file'.format(tn, sh[0])
+
             rvals = reshape(vals, sh)
             rerrs = reshape(errs, sh)
 
