@@ -36,6 +36,20 @@ fmesh34:n geom cyl
         imesh 50 110 iints 3 4
         jmesh 60 220 jints 4 5
         kmesh 0.5 1 kints 4 1
+fmesh44:n geom xyz
+        origin -100 -100 -100
+        imesh 100 iints 3
+        jmesh 100 jints 4
+        kmesh 40 100 kints 2 3
+        emesh 1e-10 20 
+fmesh54:n geom cyl
+        origin 0 0 -100
+        axs 0 0 1
+        vec 1 0 0 
+        imesh 50 110 iints 3 4
+        jmesh 60 220 jints 4 5
+        kmesh 0.5 1 kints 4 1
+        emesh 10 
 print
 cut:n j j 1e-2
 
