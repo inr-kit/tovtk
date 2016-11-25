@@ -19,11 +19,14 @@ contains values only from the total bin.
 ```
 
 ## Installation
-Getting source from the github:
+Get source from the github:
 ```bash
 >mkdir tovtk-git
 >cd tovtk-git
 >git clone git@github.com:inr-kit/tovtk.git .
+```
+Use `pip` (https://pip.pypa.io/en/stable/) to install:
+```bash
 # with --user option does not require admin rights, 
 # but PATH variable may need adjustments to point to 
 # $HOME/.local/bin
@@ -31,6 +34,17 @@ Getting source from the github:
 # Or without the --user option. in this case requires admin rights
 >sudo pip install -e .
 ```
+If `pip` is not installed in the system, it can be installed, locally or system-wide with the following commands:
+
+```bash
+# Download pip distribution, see https://pip.pypa.io/en/stable/installing/
+>wget https://bootstrap.pypa.io/get-pip.py
+# Install locally:
+>python get-pip.py --user
+# Install system-wide:
+>sudo python get-pip.py
+```
+The local variant installs `pip` to `?$HOME/.local/bin`. Ensure to add this folder to the `$PATH` variable.
 
 ## Dependensies
 The tovtk package uses `numpy` and `vtk` Python bindings. In a recent ubuntu they can be
