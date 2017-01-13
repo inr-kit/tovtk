@@ -47,8 +47,8 @@ If `pip` is not installed in the system, it can be installed, locally or system-
 The local variant installs `pip` to `?$HOME/.local/bin`. Ensure to add this folder to the `$PATH` variable.
 
 ## Dependensies
-The tovtk package uses `numpy` and `vtk` Python bindings. In a recent ubuntu they can be
-installed with 
+The tovtk package uses the numpy package and Python bindings to VTK library. In
+a recent ubuntu they can be installed with 
 ```bash
 >sudo apt-get install python-numpy
 >sudo apt-get install python-vtk
