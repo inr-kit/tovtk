@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<VTKFile type="RectilinearGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <RectilinearGrid WholeExtent="0 3 0 4 0 2">
+    <FieldData>
+      <Array type="String" Name="Meshtal description" NumberOfTuples="4" format="appended" offset="0"                   />
+    </FieldData>
+    <Piece Extent="0 3 0 4 0 2"                                                       >
+      <PointData>
+      </PointData>
+      <CellData>
+        <DataArray type="Float64" Name="val" format="appended" RangeMin="5.67435e-08"          RangeMax="6.02315e-05"          offset="180"                 />
+        <DataArray type="Float64" Name="err" format="appended" RangeMin="0.0184896"            RangeMax="0.488872"             offset="476"                 />
+      </CellData>
+      <Coordinates>
+        <DataArray type="Float64" Name="x" format="appended" RangeMin=""                     RangeMax=""                     offset="772"                 />
+        <DataArray type="Float64" Name="y" format="appended" RangeMin=""                     RangeMax=""                     offset="832"                 />
+        <DataArray type="Float64" Name="z" format="appended" RangeMin=""                     RangeMax=""                     offset="892"                 />
+      </Coordinates>
+    </Piece>
+  </RectilinearGrid>
+  <AppendedData encoding="base64">
+   _AQAAAACAAACeAAAAcwAAAA==eJzzTS3OKEnMUUjLzElVMNPLhXB1FIBETqWCmQmDgq+zX4BCZl5BaQlEUUm+QnpqXmpRYkmqAlS5QmpFYm5BTmqxAhGAi8HM1Nxcz4AhNzPPSsFUz8zcxNg0VdfAQkchN7HCCugIAyNjQ5CIKQMAkE4pXQ==AQAAAACAAADAAAAAywAAAA==eJwBwAA//0gzC6MSHYE+ncqsZKYMrT5EERJE2K2CPqDeY+9jnb0+p/vdlCKUDz+LJdja/tnBPi2CECPckb4+iH8dXuXHDj8VncGVjL7APhyPDdZBQHE+rrDL/amaqD6YtMpgEd+BPhI/NG8eX3s+VZuY9ah2oD7PX98hjAl4PrfaLlJgVsE+tQm/spyNDz/MULMENDG/Ps8Pas4MW7o+rES6TgyRDz/t5nUrgb69PjdR6WrEdm4+GTQ2krrYpD6+teC6FSN6PtMkWYc=AQAAAACAAADAAAAAywAAAA==eJwBwAA//5Bq2O+Jddo/bJc2HJYGxj+EYcCSq1jcP7ZN8bioFr0/fvxKjApBkz9TzaylgLS7PwQdrWpJR70/0AQvn1Ffkz+3uMZnsn++Px8sY0M3+94/D3uhgO1gyD833h0Zq83YP2qme53Ul9o/IZViR+NQyz/e6GM+INDaP3Ztb7ckB7w/oDlGDQEbkz/+KVWi7C29Px4Zq83/q74/YbVDDfDukj8ep+hILv+9P/SG+8itSd8/2A5G7BNAyT+jlXuBWaHcPz0XXis=AQAAAACAAAAgAAAAGwAAAA==eJxjYACByANc1xcX2K5ygNEODBBxBwCVrgjpAQAAAACAAAAoAAAAGgAAAA==eJxjYACByANgisETSsOApwOEjnQAAETwA0U=AQAAAACAAAAYAAAAEgAAAA==eJxjYACByAMMKCDSAQAUDAGz
+  </AppendedData>
+</VTKFile>
