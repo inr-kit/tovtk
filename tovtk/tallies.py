@@ -377,7 +377,9 @@ def read_meshtal(fname, use_uncertainties=True):
     res = {}
     tit = [] # title
     data_block = False          # flag to specify if results (True) or tally specs (False) are read
+    lcount = 0
     for l in open(fname, 'r'):
+        lcount += 1
         if len(tit) < 2:
             # first two lines go to the tit list.
             tit.append(l)
@@ -456,6 +458,7 @@ def read_meshtal(fname, use_uncertainties=True):
             else:
                 l = l.replace('Total', '-1') # "Total" appears when emesh is used
                 ll = l.split()
+                # print lcount, ll, iv, ir
                 v = str2float(ll[iv])
                 r = str2float(ll[ir])
                 # Variable requires std_dev of the variable. In MCNP, r is a
