@@ -66,6 +66,18 @@ fmesh74:n geom cyl
         kmesh 0.5 1 kints 4 1
         emesh 10 
         out ij
+fmesh84:n geom xyz
+        origin 0 0 -100
+        imesh 100 iints 2
+        jmesh 100 jints 2
+        kmesh 100 kints 2
+        emesh 5 10        
+fmesh94:n geom xyz
+        origin 0 0 -100
+        imesh 100 iints 2
+        jmesh 100 jints 2
+        kmesh 100 kints 2
+        emesh 5 10 1e3
 print
 cut:n j j 1e-2
 
