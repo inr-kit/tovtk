@@ -6,7 +6,7 @@ Processes rectangular meshtallies. Output vtk files contain a rectilinear grid w
 ## Limitations
 Only rectangular meshtally. 
 
-In case `emesh` is used to split to energy bins, the resulting vtk file
+In case `emesh` is used to split into energy bins, the resulting vtk file
 contains values only from the total bin.
 
 ## Invocation
@@ -25,7 +25,7 @@ Get source from the github:
 >cd tovtk-git
 >git clone git@github.com:inr-kit/tovtk.git .
 ```
-Use `pip` (https://pip.pypa.io/en/stable/) to install:
+Use [`pip`](https://pip.pypa.io/en/stable/) to install:
 ```bash
 # with --user option does not require admin rights, 
 # but PATH variable may need adjustments to point to 
@@ -34,17 +34,17 @@ Use `pip` (https://pip.pypa.io/en/stable/) to install:
 # Or without the --user option. in this case requires admin rights
 >sudo pip install -e .
 ```
-If `pip` is not installed in the system, it can be installed, locally or system-wide with the following commands:
+If `pip` is not available in the system, it can be installed with the following commands:
 
 ```bash
 # Download pip distribution, see https://pip.pypa.io/en/stable/installing/
 >wget https://bootstrap.pypa.io/get-pip.py
-# Install locally:
+# To install locally:
 >python get-pip.py --user
-# Install system-wide:
+# To install system-wide:
 >sudo python get-pip.py
 ```
-The local variant installs `pip` to `?$HOME/.local/bin`. Ensure to add this folder to the `$PATH` variable.
+The local variant installs `pip` to `$HOME/.local/bin`. Ensure to add this folder to the `$PATH` variable.
 
 ## Dependensies
 The tovtk package uses the numpy package and Python bindings to VTK library. In
@@ -54,6 +54,6 @@ a recent ubuntu they can be installed with
 >sudo apt-get install python-vtk
 ```
 
-Alternatively, Anaconda (https://www.continuum.io) includes numpy and vtk among many others.
+Alternatively, [Anaconda](https://www.continuum.io) includes numpy and vtk among many others.
 
 
