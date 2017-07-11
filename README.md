@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/inr-kit/tovtk.svg?branch=master)](https://travis-ci.org/inr-kit/tovtk)
+
 # tovtk
 Python meshtal -> VTK converter.
 
