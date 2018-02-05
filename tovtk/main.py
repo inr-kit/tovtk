@@ -37,12 +37,6 @@ from numpy import array, reshape
 
 def main():
 
-    if len(argv) == 1:
-        print help_note
-        return
-    else:
-        mfiles = argv[1:]
-
     # normalize to 400 W
     # c1 = 3.1567674e6 # W/MeV
     c1 = (400e6              # Kinetic neutron power, W
@@ -51,6 +45,12 @@ def main():
     c2 = c1 / 1.60218e-13   # Conversion factor, J/MeV
 
     print normalization_note.format(c1, c2)
+
+    if len(argv) == 1:
+        print help_note
+        return
+    else:
+        mfiles = argv[1:]
 
     # mb = vtk.vtkMultiBlockDataSet()
     # af = vtk.vtkAppendFilter()
