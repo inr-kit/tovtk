@@ -4,7 +4,7 @@ from sys import argv
 import vtk
 from numpy import array, reshape, amax, amin
 from .tallies import read_meshtal
-from .dgs import readdgs
+from .dgs import readdgs, readdgs_old
 
 _vtkVersion = vtk.vtkVersion.GetVTKSourceVersion().split()[-1]
 
@@ -148,6 +148,9 @@ def main():
         if mfiles[0] == 'type=dgs':
             dtype = 'dgs'
             mfiles = mfiles[1:]
+        elif mfiles[0] == 'type=dgs.old':
+            dtype = 'dgs.old'
+            mfiles = mfiles[1:]
         else:
             dtype = 'meshtal'
 
@@ -204,6 +207,12 @@ def main():
         for dgs in mfiles:
             print 'Reading ', dgs
             x, y, z, a = readdgs(dgs)
+            fname = '{}.vtr'.format(dgs)
+            ws = rectangular(fname, x, y, z, a, errs=None)
+    elif dtype == 'dgs.old':
+        for dgs in mfiles:
+            print 'Reading ', dgs
+            x, y, z, a = readdgs_old(dgs)
             fname = '{}.vtr'.format(dgs)
             ws = rectangular(fname, x, y, z, a, errs=None)
 
