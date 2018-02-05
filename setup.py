@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name = 'tovtk',
-      version = '1.1.0',
+      version = '1.2.0',
       description = 'Python meshtal to vtk converter',
       author = 'A. Travleev, INR-KIT',
       author_email = 'anton.travleev@kit.edu',

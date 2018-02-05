@@ -58,4 +58,6 @@ a recent ubuntu they can be installed with
 
 Alternatively, [Anaconda](https://www.continuum.io) includes numpy and vtk among many others.
 
+## Under windows
+The current version of Python 2.7 is shipped with `pip`, which can be used to install the precompiled `numpy` package. 
 
