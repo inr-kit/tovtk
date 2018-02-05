@@ -61,6 +61,7 @@ def readdgs_old(fname):
         dx = (xmax - xmin) / xn
         dy = (ymax - ymin) / yn
         dz = (zmax - zmin) / zn
+        dv = dx * dy * dz
 
         x = map(lambda i: xmin + i*dx + dx/2., range(xn+1))
         y = map(lambda i: ymin + i*dy + dy/2., range(yn+1))
@@ -80,7 +81,7 @@ def readdgs_old(fname):
             assert abs(yi - y[j]) < 0.1
             assert abs(zi - z[k]) < 0.1
             vals = map(float, vals[3:])
-            a[i, j, k] = sum(vals)
+            a[i, j, k] = sum(vals) * dv
 
         return x, y, z, a
 
