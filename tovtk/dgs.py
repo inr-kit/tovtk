@@ -15,10 +15,9 @@ def readdgs(fname):
         a = zeros((ni - 1, nj - 1, nk - 1))
         for k in tqdm(range(ne)):
             vals = f.readline().split()
-            ti, ii, ji, ki = map(int, vals[0:4])
+            ti, i, j, k = map(int, vals[0:4])
             vals = map(float, vals[4:])
-            a[ii - 1, ji - 1, ki - 1] = sum(vals)
-
+            a[i - 1, j - 1, k - 1] = sum(vals)
         return x, y, z, a
 
 

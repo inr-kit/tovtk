@@ -5,6 +5,7 @@ import vtk
 from numpy import array, reshape, amax, amin
 from .tallies import read_meshtal
 from .dgs import readdgs, readdgs_old
+from .fmc import read_vol_frac
 
 _vtkVersion = vtk.vtkVersion.GetVTKSourceVersion().split()[-1]
 
@@ -156,12 +157,15 @@ def main():
         if mfiles[0] == 'type=dgs':
             dtype = 'dgs'
             mfiles = mfiles[1:]
+        elif mfiles[0] == 'type=dgsN':
+            dtype = 'dgsN'
+            fmc = mfiles[1]
+            mfiles = mfiles[2:]
         elif mfiles[0] == 'type=dgs.old':
             dtype = 'dgs.old'
             mfiles = mfiles[1:]
         else:
             dtype = 'meshtal'
-
 
     if dtype == 'meshtal':
         for meshtal in mfiles:
@@ -208,6 +212,35 @@ def main():
             print 'Reading ', dgs
             x, y, z, a = readdgs(dgs)
             fname = '{}.vtr'.format(dgs)
+            ws = rectangular(fname, x, y, z, a, errs=None)
+    elif dtype == 'dgsN':
+        print 'Reading vol.fractions from ', fmc
+        x0, y0, z0, vf = read_vol_frac(fmc)
+        fname = '{}_vf.vtr'.format(fmc)
+        ws = rectangular(fname, x0, y0, z0, vf, errs=None)
+        if ws == 1:
+            print 'Vol. fractions written to', fname
+        else:
+            print'Failed to write vol. fractions to', fname
+        for dgs in mfiles:
+            print 'Reading ', dgs
+            x, y, z, a = readdgs(dgs)
+            assert x == x0 and y == y0 and z == z0
+            assert a.shape == vf.shape
+            # Normalize gamma intensity in mesh element to gamma intencity in
+            # material volume
+            mask = a > 0.0
+            if not all(vf[mask] > 0):
+                print 'There are zero material vol. fracs in activated elements'
+                # print indices of mesh elements, where a > 0 and vf is zero:
+                for i in range(a.shape[0]):
+                    for j in range(a.shape[1]):
+                        for k in range(a.shape[2]):
+                            if a[i, j, k] > 0 and vf[i, j, k] == 0:
+                                print i+1, j+1, k+1, a[i, j, k], vf[i, j, k]
+            a[mask] = a[mask] / vf[mask]
+
+            fname = '{}N.vtr'.format(dgs)
             ws = rectangular(fname, x, y, z, a, errs=None)
     elif dtype == 'dgs.old':
         for dgs in mfiles:
