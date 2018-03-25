@@ -62,9 +62,9 @@ def readdgs_old(fname):
         dz = (zmax - zmin) / zn
         dv = dx * dy * dz
 
-        x = map(lambda i: xmin + i*dx + dx/2., range(xn+1))
-        y = map(lambda i: ymin + i*dy + dy/2., range(yn+1))
-        z = map(lambda i: zmin + i*dz + dz/2., range(zn+1))
+        x = map(lambda i: xmin + i*dx, range(xn+1))
+        y = map(lambda i: ymin + i*dy, range(yn+1))
+        z = map(lambda i: zmin + i*dz, range(zn+1))
 
         # read data
         a = zeros((xn, yn, zn))
@@ -76,9 +76,9 @@ def readdgs_old(fname):
             k = c_to_i(zmin, zmax, zn, zi)
 
             # check coordinate to index conversion
-            assert abs(xi - x[i]) < 0.1
-            assert abs(yi - y[j]) < 0.1
-            assert abs(zi - z[k]) < 0.1
+            assert abs(xi - x[i] - dx/2) < 0.1
+            assert abs(yi - y[j] - dy/2) < 0.1
+            assert abs(zi - z[k] - dz/2) < 0.1
             vals = map(float, vals[3:])
             a[i, j, k] = sum(vals) * dv
 
