@@ -127,7 +127,7 @@ def rectangular(fname, xbounds, ybounds, zbounds, vals, errs=None, descr=[]):
 
     # write to file:
     writer = vtk.vtkXMLRectilinearGridWriter()
-    if _vtkVersion[0] == '6':
+    if _vtkVersion[0] in '68':
         writer.SetInputData(grid)
     else:
         # _vtkVersion[0] == '5':
