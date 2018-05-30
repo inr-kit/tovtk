@@ -75,9 +75,9 @@ def readdgs_old(fname):
             k = c_to_i(zmin, zmax, zn, zi)
 
             # check coordinate to index conversion
-            assert abs(xi - x[i]) < 0.1
-            assert abs(yi - y[j]) < 0.1
-            assert abs(zi - z[k]) < 0.1
+            assert abs(xi - x[i]) < 0.01
+            assert abs(yi - y[j]) < 0.01
+            assert abs(zi - z[k]) < 0.01
             vals = map(float, vals[3:])
             a[i, j, k] = sum(vals)
 
