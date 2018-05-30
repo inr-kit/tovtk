@@ -385,31 +385,31 @@ def read_meshtal(fname, use_uncertainties=True):
             tit.append(l)
         elif not data_block:
             # this is tally specifications block
-            if Noh == 0 and ' Number of histories' == l[0:20]:
+            if Noh == 0 and ' Number of histories' in l:
                 Noh = str2float(l.split()[-1])  # in meshtal number of histories is written with two zeroes after the decimal point
-            if l == '\n':
+            if len(l.split()) == 0:
+                # empty lines in the tally header block are ignored
                 pass
-            if ' Mesh Tally Number' == l[0:18]:
+            if 'Mesh Tally Number' in l:
                 tid = int(l.split()[-1])
                 mt = MeshTally()
                 res[tid] = mt
-            if ('  Cylinder origin at' == l[0:20] or
-                '               origin at' == l[0:24]):
+            if ('Cylinder origin at' in l or '         origin at' in l):
                 mt.geom = 'cyl'
                 ll = l.split()
-                mt.origin = ( ll[3], ll[4], ll[5][:-1] ) # the last entry followed by comma
-                mt.axs = tuple( ll[8:11] )
-            if '    X direction:' == l[0:16]:
+                mt.origin = (ll[3], ll[4], ll[5][:-1]) # the last entry followed by comma
+                mt.axs = tuple(ll[8:11])
+            if 'X direction:' in l:
                 mt.imesh.pop(0) # when initialized, it is set to [1.]
                 for ll in l.split()[2:]:
                     mt.imesh.append(str2float(ll))
                 mt.origin.x = mt.imesh.pop(0)
-            if '    Y direction:' == l[0:16]:
+            if ' Y direction:' in l:
                 mt.jmesh.pop(0) # when initialized, it is set to [1.]
                 for ll in l.split()[2:]:
                     mt.jmesh.append(str2float(ll))
                 mt.origin.y = mt.jmesh.pop(0)
-            if '    Z direction:' == l[0:16]:
+            if 'Z direction:' in l:
                 if mt.geom == 'xyz':
                     mt.kmesh.pop(0) # when initialized, it is set to [1.]
                     for ll in l.split()[2:]:
@@ -421,13 +421,13 @@ def read_meshtal(fname, use_uncertainties=True):
                 else:
                     raise ValueError('Cannot read Z direction boundaries for geometry type ', mt.geom)
 
-            if '    R direction:' == l[0:16]:
+            if 'R direction:' in l:
                 for ll in l.split()[2:]:
                     mt.imesh.append(str2float(ll))
-            if '    Theta direction:' == l[0:20]:
+            if 'Theta direction:' in l:
                 for ll in l.split()[3:]:
                     mt.kmesh.append(str2float(ll))
-            if '    Energy bin bound' == l[0:20]:
+            if 'Energy bin bound' in l:
                 lll = l.split()
                 # Remove the default 0, set by __init__
                 mt.emesh.pop(0)
@@ -441,7 +441,7 @@ def read_meshtal(fname, use_uncertainties=True):
                 if len(mt.emesh) == 2:
                     mt.emesh.pop(0)
 
-            if 'Result     Rel Error' in l:
+            if 'Rel Error' in l:
                 # this is the head line for the table with results.
                 data_block = True
                 # define the column indices containing Result and Error:

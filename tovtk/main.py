@@ -127,7 +127,7 @@ def rectangular(fname, xbounds, ybounds, zbounds, vals, errs=None, descr=[]):
 
     # write to file:
     writer = vtk.vtkXMLRectilinearGridWriter()
-    if _vtkVersion[0] == '6':
+    if _vtkVersion[0] in '68':
         writer.SetInputData(grid)
     else:
         # _vtkVersion[0] == '5':
@@ -169,7 +169,7 @@ def main():
 
     if dtype == 'meshtal':
         for meshtal in mfiles:
-            print 'Reading ', meshtal,
+            print 'Reading {} ...'.format(meshtal),
 
             title, nps, td = read_meshtal(meshtal, use_uncertainties=False)
             print 'complete'
@@ -183,6 +183,11 @@ def main():
 
                 # reshape arrays, to account for energy bins:
                 sh = (len(t.emesh), len(t.imesh), len(t.jmesh), len(t.kmesh))
+                print 'Number of energy bins:', sh[0]
+                print 'Number of x bins:', sh[1]
+                print 'Number of y bins:', sh[2]
+                print 'Number of z bins:', sh[3]
+                print 'Number of values:', len(t.values)
 
                 if sh[0] > 1:
                     print 'Meshtally {} contains {} energy bins.'.format(tn, sh[0])
