@@ -56,15 +56,15 @@ a recent ubuntu they can be installed with
 >sudo apt-get install python-vtk
 ```
 
-Alternatively, [Anaconda](https://www.continuum.io) includes numpy and vtk
-among many others. Anaconda is the Pyhton distribution for different OS that
-includes many of precompiled science packages. It can be installed to the local
+Alternatively, the [Anaconda](https://www.continuum.io) distribution can be used. 
+Anaconda is the Pyhton distribution for different OS that includes many precompiled
+science packages, among them numpy and vtk. It can be installed to the local
 user filespace using the following recipe:
 ```bash
 # Download distribution
-wget https://repo.anaconda.com/archive/Anaconda2-5.2.0-Linux-x86_64.sh
+>wget https://repo.anaconda.com/archive/Anaconda2-5.2.0-Linux-x86_64.sh
 # Change access rights of the downloaded file to run it:
-chmod u+x ./Anaconda2-5.2.0-Linux-x86_64.sh
+>chmod u+x ./Anaconda2-5.2.0-Linux-x86_64.sh
 # Start installation. 
 ./Anaconda2-5.2.0-Linux-x86_64.sh
 ```
