@@ -1,9 +1,9 @@
 [![Build Status](https://travis-ci.org/inr-kit/tovtk.svg?branch=master)](https://travis-ci.org/inr-kit/tovtk)
 
 # tovtk
-Python meshtal -> VTK converter.
+The package provides the `tovtk` command line tool to convert MCNP5 and MCNP6 meshtal viles to VTK format.
 
-Processes rectangular meshtallies. Output vtk files contain a rectilinear grid with cell values.
+The output vtk files contain a rectilinear grid with cell values.
 
 ## Limitations
 Only rectangular meshtally. 
@@ -56,7 +56,23 @@ a recent ubuntu they can be installed with
 >sudo apt-get install python-vtk
 ```
 
-Alternatively, [Anaconda](https://www.continuum.io) includes numpy and vtk among many others.
+Alternatively, [Anaconda](https://www.continuum.io) includes numpy and vtk
+among many others. Anaconda is the Pyhton distribution for different OS that
+includes many of precompiled science packages. It can be installed to the local
+user filespace using the following recipe:
+```bash
+# Download distribution
+wget https://repo.anaconda.com/archive/Anaconda2-5.2.0-Linux-x86_64.sh
+# Change access rights of the downloaded file to run it:
+chmod u+x ./Anaconda2-5.2.0-Linux-x86_64.sh
+# Start installation. 
+./Anaconda2-5.2.0-Linux-x86_64.sh
+```
+The installer asks interactively to agree to the license and to specify the
+installation directory. The default installation directory is in the user
+account therefore no adiministrator rights are needed. The installer also
+modifies the user's `.bashrc` configuration file, so the default Python
+interpreter is that installed with Anaconda. 
 
 ## Under windows
 The current version of Python 2.7 is shipped with `pip`, which can be used to install the precompiled `numpy` package. 
