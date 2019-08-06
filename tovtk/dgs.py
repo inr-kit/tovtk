@@ -6,17 +6,17 @@ from tqdm import tqdm
 def readdgs(fname):
     with open(fname) as f:
         # read header
-        ni, nj, nk = map(int, f.readline().split())
-        x = map(float, f.readline().split())
-        y = map(float, f.readline().split())
-        z = map(float, f.readline().split())
+        ni, nj, nk = list(map(int, f.readline().split()))
+        x = list(map(float, f.readline().split()))
+        y = list(map(float, f.readline().split()))
+        z = list(map(float, f.readline().split()))
         ne = int(f.readline())
         # read data
         a = zeros((ni - 1, nj - 1, nk - 1))
-        for k in tqdm(range(ne)):
+        for k in tqdm(list(range(ne))):
             vals = f.readline().split()
-            ti, i, j, k = map(int, vals[0:4])
-            vals = map(float, vals[4:])
+            ti, i, j, k = list(map(int, vals[0:4]))
+            vals = list(map(float, vals[4:]))
             a[i - 1, j - 1, k - 1] = sum(vals)
         return x, y, z, a
 
@@ -52,25 +52,25 @@ def readdgs_old(fname):
     with open(fname) as f:
         # read header
         tokens = f.readline().split()
-        xmin, xmax = map(float, tokens[0:2])
-        ymin, ymax = map(float, tokens[3:5])
-        zmin, zmax = map(float, tokens[6:8])
-        xn, yn, zn, n = map(int, tokens[2::3])
+        xmin, xmax = list(map(float, tokens[0:2]))
+        ymin, ymax = list(map(float, tokens[3:5]))
+        zmin, zmax = list(map(float, tokens[6:8]))
+        xn, yn, zn, n = list(map(int, tokens[2::3]))
 
         dx = (xmax - xmin) / xn
         dy = (ymax - ymin) / yn
         dz = (zmax - zmin) / zn
         dv = dx * dy * dz
 
-        x = map(lambda i: xmin + i*dx, range(xn+1))
-        y = map(lambda i: ymin + i*dy, range(yn+1))
-        z = map(lambda i: zmin + i*dz, range(zn+1))
+        x = [xmin + i*dx for i in range(xn+1)]
+        y = [ymin + i*dy for i in range(yn+1)]
+        z = [zmin + i*dz for i in range(zn+1)]
 
         # read data
         a = zeros((xn, yn, zn))
-        for k in tqdm(range(n)):
+        for k in tqdm(list(range(n))):
             vals = f.readline().split()
-            xi, yi, zi = map(float, vals[0:3])
+            xi, yi, zi = list(map(float, vals[0:3]))
             i = c_to_i(xmin, xmax, xn, xi)
             j = c_to_i(ymin, ymax, yn, yi)
             k = c_to_i(zmin, zmax, zn, zi)
@@ -79,7 +79,7 @@ def readdgs_old(fname):
             assert abs(xi - x[i]) < 0.01
             assert abs(yi - y[j]) < 0.01
             assert abs(zi - z[k]) < 0.01
-            vals = map(float, vals[3:])
+            vals = list(map(float, vals[3:]))
             a[i, j, k] = sum(vals) * dv
 
         return x, y, z, a
@@ -87,4 +87,4 @@ def readdgs_old(fname):
 if __name__ == '__main__':
     from sys import argv
     x, y, z, a = readdgs(argv[1])
-    print len(x), len(y), len(z), a.shape
+    print(len(x), len(y), len(z), a.shape)

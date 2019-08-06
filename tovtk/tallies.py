@@ -462,17 +462,17 @@ def read_meshtal(fname, use_uncertainties=True):
                     v = str2float(ll[iv])
                     r = str2float(ll[ir])
                 except IndexError as ie:
-                    print 'Problem on line', lcount
-                    print 'Original line:'
-                    print repr(l)
-                    print """
+                    print('Problem on line', lcount)
+                    print('Original line:')
+                    print(repr(l))
+                    print("""
                         If the original line contains two entries not separated
                         by a space (e.g. the space is replaced by the minus sign
                         of a negative value), try to add spaces by the following
                         sed command:
 
                         > sed -e 's/\([0-9]\)\(-[0-9]\)/\\1 \\2/g' meshtal > meshtal.fixed
-                        """
+                        """)
                     raise ie
 
                 # Variable requires std_dev of the variable. In MCNP, r is a

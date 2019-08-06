@@ -145,10 +145,10 @@ def main():
           14.0791)           # mean neutron energy, MeV
     c2 = c1 / 1.60218e-13    # Conversion factor, J/MeV
 
-    print normalization_note.format(c1, c2)
+    print(normalization_note.format(c1, c2))
 
     if len(argv) == 1:
-        print help_note
+        print(help_note)
         return
     else:
         mfiles = argv[1:]
@@ -169,12 +169,12 @@ def main():
 
     if dtype == 'meshtal':
         for meshtal in mfiles:
-            print 'Reading {} ...'.format(meshtal),
+            print('Reading {} ...'.format(meshtal), end=' ')
 
             title, nps, td = read_meshtal(meshtal, use_uncertainties=False)
-            print 'complete'
+            print('complete')
 
-            for tn, t in td.items():
+            for tn, t in list(td.items()):
                 if t.geom.lower() not in ('xyz', 'rect'):
                     continue
 
@@ -183,15 +183,15 @@ def main():
 
                 # reshape arrays, to account for energy bins:
                 sh = (len(t.emesh), len(t.imesh), len(t.jmesh), len(t.kmesh))
-                print 'Number of energy bins:', sh[0]
-                print 'Number of x bins:', sh[1]
-                print 'Number of y bins:', sh[2]
-                print 'Number of z bins:', sh[3]
-                print 'Number of values:', len(t.values)
+                print('Number of energy bins:', sh[0])
+                print('Number of x bins:', sh[1])
+                print('Number of y bins:', sh[2])
+                print('Number of z bins:', sh[3])
+                print('Number of values:', len(t.values))
 
                 if sh[0] > 1:
-                    print 'Meshtally {} contains {} energy bins.'.format(tn, sh[0])
-                    print 'Only "total" is written to vtk file'
+                    print('Meshtally {} contains {} energy bins.'.format(tn, sh[0]))
+                    print('Only "total" is written to vtk file')
 
                 # Prepare array of values
                 rvals = reshape(vals, sh)[-1, :, :, :]
@@ -209,26 +209,26 @@ def main():
                 ws = rectangular(fname, x, y, z, rvals, errs=rerrs, descr=descr)
 
                 if ws == 1:
-                    print 'Tally {} written to {}'.format(tn, fname)
+                    print('Tally {} written to {}'.format(tn, fname))
                 else:
-                    print 'Failed to write tally {} to {}'.format(tn, fname)
+                    print('Failed to write tally {} to {}'.format(tn, fname))
     elif dtype == 'dgs':
         for dgs in mfiles:
-            print 'Reading ', dgs
+            print('Reading ', dgs)
             x, y, z, a = readdgs(dgs)
             fname = '{}.vtr'.format(dgs)
             ws = rectangular(fname, x, y, z, a, errs=None)
     elif dtype == 'dgsN':
-        print 'Reading vol.fractions from ', fmc
+        print('Reading vol.fractions from ', fmc)
         x0, y0, z0, vf = read_vol_frac(fmc)
         fname = '{}_vf.vtr'.format(fmc)
         ws = rectangular(fname, x0, y0, z0, vf, errs=None)
         if ws == 1:
-            print 'Vol. fractions written to', fname
+            print('Vol. fractions written to', fname)
         else:
-            print'Failed to write vol. fractions to', fname
+            print('Failed to write vol. fractions to', fname)
         for dgs in mfiles:
-            print 'Reading ', dgs
+            print('Reading ', dgs)
             x, y, z, a = readdgs(dgs)
             assert x == x0 and y == y0 and z == z0
             assert a.shape == vf.shape
@@ -236,20 +236,20 @@ def main():
             # material volume
             mask = a > 0.0
             if not all(vf[mask] > 0):
-                print 'There are zero material vol. fracs in activated elements'
+                print('There are zero material vol. fracs in activated elements')
                 # print indices of mesh elements, where a > 0 and vf is zero:
                 for i in range(a.shape[0]):
                     for j in range(a.shape[1]):
                         for k in range(a.shape[2]):
                             if a[i, j, k] > 0 and vf[i, j, k] == 0:
-                                print i+1, j+1, k+1, a[i, j, k], vf[i, j, k]
+                                print(i+1, j+1, k+1, a[i, j, k], vf[i, j, k])
             a[mask] = a[mask] / vf[mask]
 
             fname = '{}N.vtr'.format(dgs)
             ws = rectangular(fname, x, y, z, a, errs=None)
     elif dtype == 'dgs.old':
         for dgs in mfiles:
-            print 'Reading ', dgs
+            print('Reading ', dgs)
             x, y, z, a = readdgs_old(dgs)
             fname = '{}.vtr'.format(dgs)
             ws = rectangular(fname, x, y, z, a, errs=None)

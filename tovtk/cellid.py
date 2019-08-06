@@ -14,7 +14,7 @@ def vtkDA(N):
     r = vtk.vtkDoubleArray()
     r.SetNumberOfTuples(N)
 
-    for i in xrange(N):
+    for i in range(N):
         r.SetTuple(i, (i, ))
 
     return r
@@ -23,7 +23,7 @@ def npyDA(N):
     """
     Returns a new numpy array containing N elements
     """
-    r = numpy.array(xrange(N))
+    r = numpy.array(range(N))
     return r
 
 

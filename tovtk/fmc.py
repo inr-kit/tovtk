@@ -9,10 +9,10 @@ def fmc_iterator(fname):
     """
     with open(fname) as f:
         # read header
-        ni, nj, nk = map(int, f.readline().split())
-        x = map(float, f.readline().split())
-        y = map(float, f.readline().split())
-        z = map(float, f.readline().split())
+        ni, nj, nk = list(map(int, f.readline().split()))
+        x = list(map(float, f.readline().split()))
+        y = list(map(float, f.readline().split()))
+        z = list(map(float, f.readline().split()))
         ne = int(f.readline())
         # read data
         a = zeros((ni - 1, nj - 1, nk - 1))
@@ -28,11 +28,11 @@ def read_vol_frac(fname):
     Compute vol. frac. of materials in each fine mesh element.
     """
     fmci = fmc_iterator(fname)
-    x, y, z, ne, a = fmci.next()
-    for k in tqdm(range(ne)):
+    x, y, z, ne, a = next(fmci)
+    for k in tqdm(list(range(ne))):
         vals = fmci.next().split()
-        i, j, k = map(int, vals[0:3])
-        vals = map(int, vals[6:])
+        i, j, k = list(map(int, vals[0:3]))
+        vals = list(map(int, vals[6:]))
         # cell indices
         nc = vals[0]  # number of cells detected
         nh = vals[1]  # number of samples
